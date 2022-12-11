@@ -3,10 +3,31 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { Color, Group } from 'three'
 import * as dat from 'lil-gui'
+//import * as fs from 'fs';
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader'
 
 // debug ui
 const gui = new dat.GUI()
+
+// Requiring fs module in which
+// writeFile function is defined.
+// //const fs = require('fs')
+    
+// Data which will write in a file.
+// let data = "Learning how to write in a file."
+    
+// // Write data in 'Output.txt' .
+// fs.writeFile('Output.txt', data, (err) => {
+        
+//     // In case of a error throw err.
+//     if (err) throw err;
+// })
+
+// const fsm = require('fs-minipass')
+// //const readStream = new fsm.ReadStream('file.txt')
+// const writeStream = new fsm.WriteStream('output.txt')
+// writeStream.write('some file header or whatever\n')
+
 
 
 
@@ -59,10 +80,10 @@ const scene = new THREE.Scene()
 // material.alphaMap = doorAlphaTexture
 // material.side = THREE.DoubleSide
 
-// normal material
-// const material = new THREE.MeshNormalMaterial()
-// material.wireframe = true
-// material.flatShading = true
+//normal material
+const material = new THREE.MeshNormalMaterial()
+//material.wireframe = true
+material.flatShading = true
 
 // matcap material
 // const material = new THREE.MeshMatcapMaterial()
@@ -84,9 +105,9 @@ const scene = new THREE.Scene()
 // material.gradientMap = gradientTexture
 
 // standard material
-const material = new THREE.MeshStandardMaterial()
-material.metalness = 0.7
-material.roughness = 0.2
+// const material = new THREE.MeshStandardMaterial()
+// material.metalness = 0.7
+// material.roughness = 0.2
 // material.map = doorColorTexture
 // material.aoMap = doorAmbientOcclusionTexture
 // material.aoMapIntensity = 1
@@ -100,10 +121,10 @@ material.roughness = 0.2
 // material.transparent = true
 
 // adding envirinment map
-material.envMap = environmentMapTexture
+//material.envMap = environmentMapTexture
 
-gui.add(material, 'metalness').min(0).max(1).step(0.0001)
-gui.add(material, 'roughness').min(0).max(1).step(0.0001)
+//gui.add(material, 'metalness').min(0).max(1).step(0.0001)
+//gui.add(material, 'roughness').min(0).max(1).step(0.0001)
 //gui.add(material, 'aoMapIntensity').min(0).max(10).step(0.0001)
 //gui.add(material, 'displacementScale').min(0).max(10).step(0.0001)
 
@@ -138,10 +159,11 @@ const loader = new STLLoader()
 const objectA = new THREE.Group()
 const objectB = new THREE.Group()
 const objectC = new THREE.Group()
-let curObjectPath = '/models/Bunny/bunny';
-const objectAPath = '/models/Bunny/bunny';
-const objectBPath = '/models/Bust/bust';
-const objectCPath = '/models/Frog/frog';
+let curObjectPath = '/models/Grape/grape';
+const objectAPath = '/models/Pineapple/pine';
+const objectBPath = '/models/Apple/apple';
+const objectCPath = '/models/Mushroom/mush';
+let resolutionIndex = '9';
 
 // object selection event
 window.addEventListener('keydown', (event) =>
@@ -156,7 +178,7 @@ window.addEventListener('keydown', (event) =>
         case "KeyA":
             curObjectPath = objectAPath
             loader.load(
-                curObjectPath + '1.stl',
+                curObjectPath + resolutionIndex + '.stl',
                 function (geometry) { 
                     geometry.scale(0.025, 0.025, 0.025)
                     geometry.rotateX(Math.PI / 2)
@@ -183,7 +205,7 @@ window.addEventListener('keydown', (event) =>
         case "KeyB":
             curObjectPath = objectBPath
             loader.load(
-                curObjectPath + '1.stl',
+                curObjectPath + resolutionIndex + '.stl',
                 function (geometry) { 
                     geometry.scale(0.025, 0.025, 0.025)
                     geometry.rotateX(Math.PI / 2)
@@ -210,7 +232,7 @@ window.addEventListener('keydown', (event) =>
         case "KeyC":
             curObjectPath = objectCPath
             loader.load(
-                curObjectPath + '1.stl',
+                curObjectPath + resolutionIndex + '.stl',
                 function (geometry) { 
                     geometry.scale(0.025, 0.025, 0.025)
                     geometry.rotateX(Math.PI / 2)
@@ -248,8 +270,9 @@ window.addEventListener('keydown', (event) =>
     }
     if (event.key >= 1 && event.key <= 9)
     {
+        resolutionIndex = event.key
         loader.load(
-            curObjectPath + event.key + '.stl',
+            curObjectPath + resolutionIndex + '.stl',
             function (geometry) {   
                 // orientate the object
                 geometry.scale(0.025, 0.025, 0.025)
@@ -384,16 +407,16 @@ const tick = () =>
     if (scene.children.length > 1)
     {    
         console.log(scene.children[0].children[0].geometry.attributes.normal.count)
-        document.getElementById("currentTri").innerHTML = scene.children[0].children[0].geometry.attributes.normal.count;
+        document.getElementById("currentTri").innerHTML = (scene.children[0].children[0].geometry.attributes.normal.count / 3);
     }
           
     
     const elapsedTime = clock.getElapsedTime()
 
     // Update camera
-    camera.position.x = Math.sin(arrowControls.x) * 2
-    camera.position.y = Math.cos(arrowControls.y) * 2
-    camera.position.z = Math.cos(arrowControls.x) * 2
+    camera.position.x = Math.sin(arrowControls.x) * 2.5 
+    camera.position.y = Math.cos(arrowControls.y) * 2.5 * Math.sin((elapsedTime/2))
+    camera.position.z = Math.cos(arrowControls.x) * 2.5
     //camera.position.y = cursor.y * 3
     camera.lookAt(0, 0, 0)
 
@@ -401,6 +424,7 @@ const tick = () =>
     sphere.rotation.y = 0.1 * elapsedTime
     // plane.rotation.y = -0.1 * elapsedTime
     torus.rotation.y = 0.1 * elapsedTime
+
     sphere.rotation.x = 0.15 * elapsedTime
     // plane.rotation.x = 0.15 * elapsedTime
     torus.rotation.x = -0.15 * elapsedTime

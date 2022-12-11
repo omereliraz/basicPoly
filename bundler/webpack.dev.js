@@ -51,5 +51,17 @@ module.exports = merge(
                 return middlewares
             }
         }
+    },
+    function (webPackEnv) {
+        return {
+            resolve: {
+                fallback:
+                {
+                    "fs": false,
+                    "os": false,
+                    "path": false
+                }
+            }
+        }
     }
 )
