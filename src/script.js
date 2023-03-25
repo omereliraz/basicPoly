@@ -163,7 +163,9 @@ let curObjectPath = '/models/Grape/grape';
 const objectAPath = '/models/Pineapple/pine';
 const objectBPath = '/models/Apple/apple';
 const objectCPath = '/models/Mushroom/mush';
-let resolutionIndex = '9';
+const objectDPath = '/models/Grape/grape';
+const objectEPath = '/models/Straw/straw';
+let resolutionIndex = '1';
 
 // object selection event
 window.addEventListener('keydown', (event) =>
@@ -177,6 +179,7 @@ window.addEventListener('keydown', (event) =>
     {
         case "KeyA":
             curObjectPath = objectAPath
+            resolutionIndex = 9
             loader.load(
                 curObjectPath + resolutionIndex + '.stl',
                 function (geometry) { 
@@ -204,6 +207,7 @@ window.addEventListener('keydown', (event) =>
             break; 
         case "KeyB":
             curObjectPath = objectBPath
+            resolutionIndex = 9
             loader.load(
                 curObjectPath + resolutionIndex + '.stl',
                 function (geometry) { 
@@ -231,6 +235,63 @@ window.addEventListener('keydown', (event) =>
             break; 
         case "KeyC":
             curObjectPath = objectCPath
+            resolutionIndex = 9
+            loader.load(
+                curObjectPath + resolutionIndex + '.stl',
+                function (geometry) { 
+                    geometry.scale(0.025, 0.025, 0.025)
+                    geometry.rotateX(Math.PI / 2)
+                    geometry.rotateX(Math.PI)
+                    
+                    // orientate the object
+                    const loadedMesh = new THREE.Mesh(geometry, material)
+                    loadedMesh.position.z = 0.5
+        
+                    objectA.clear()
+                    objectA.add(loadedMesh)
+                    scene.clear()
+                    scene.add(objectA)
+                    scene.add(camera)
+                },
+                (xhr) => {
+                    console.log((xhr.loaded / xhr.total) * 100 + '% loaded')
+                },
+                (error) => {
+                    console.log(error)
+                }
+            )
+            break; 
+        case "KeyD":
+            curObjectPath = objectDPath
+            resolutionIndex = 9
+            loader.load(
+                curObjectPath + resolutionIndex + '.stl',
+                function (geometry) { 
+                    geometry.scale(0.025, 0.025, 0.025)
+                    geometry.rotateX(Math.PI / 2)
+                    geometry.rotateX(Math.PI)
+                    
+                    // orientate the object
+                    const loadedMesh = new THREE.Mesh(geometry, material)
+                    loadedMesh.position.z = 0.5
+        
+                    objectA.clear()
+                    objectA.add(loadedMesh)
+                    scene.clear()
+                    scene.add(objectA)
+                    scene.add(camera)
+                },
+                (xhr) => {
+                    console.log((xhr.loaded / xhr.total) * 100 + '% loaded')
+                },
+                (error) => {
+                    console.log(error)
+                }
+            )
+            break; 
+        case "KeyE":
+            curObjectPath = objectEPath
+            resolutionIndex = 9
             loader.load(
                 curObjectPath + resolutionIndex + '.stl',
                 function (geometry) { 
@@ -261,6 +322,7 @@ window.addEventListener('keydown', (event) =>
 
 
 // Load stl files using number pad with corresponding resolution
+// key press 1 == turn left/lower, key press 2 == turn right/higher
 window.addEventListener('keydown', (event) =>
 {
 
@@ -268,13 +330,24 @@ window.addEventListener('keydown', (event) =>
     {
         return; // Do nothing if event already handled
     }
-    if (event.key >= 1 && event.key <= 9)
+    if (event.key >= 1 && event.key <= 2)
     {
-        resolutionIndex = event.key
+        
+        // raise resolution if not maximal
+        if (event.key == 2 && resolutionIndex > 1)
+        {
+           resolutionIndex -= 1
+        }
+        // lower resolution if not minimal
+        if (event.key == 1 && resolutionIndex < 9)
+        {
+           resolutionIndex += 1
+        }
+        
         loader.load(
             curObjectPath + resolutionIndex + '.stl',
             function (geometry) {   
-                // orientate the object
+                // orient object
                 geometry.scale(0.025, 0.025, 0.025)
                 geometry.rotateX(Math.PI / 2)
                 geometry.rotateX(Math.PI)                
@@ -407,7 +480,7 @@ const tick = () =>
     if (scene.children.length > 1)
     {    
         console.log(scene.children[0].children[0].geometry.attributes.normal.count)
-        document.getElementById("currentTri").innerHTML = (scene.children[0].children[0].geometry.attributes.normal.count / 3);
+        document.getElementById("currentTri").innerHTML = Math.ceil((scene.children[0].children[0].geometry.attributes.normal.count / 3) / 3);
     }
           
     
