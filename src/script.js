@@ -1,7 +1,7 @@
 import './style.css'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-import { Color, Group } from 'three'
+import { Color, Group, LoadingManager } from 'three'
 import * as dat from 'lil-gui'
 //import * as fs from 'fs';
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader'
@@ -67,6 +67,11 @@ const canvas = document.querySelector('canvas.webgl')
 
 // Scene
 const scene = new THREE.Scene()
+const idleScene = new THREE.Scene()
+
+const texture = new THREE.TextureLoader().load( "textures/door/kitchen.jpg" );
+idleScene.background = texture
+
 
 // Materials
 
@@ -149,7 +154,13 @@ torus.geometry.setAttribute(
     new THREE.BufferAttribute(torus.geometry.attributes.uv.array, 2)
 )
 
-//scene.add(sphere, torus)
+
+
+const body = document.querySelector('body')
+window.addEventListener('dblclick', () =>
+{
+    body.requestFullscreen()
+})
 
 
 // Load stl files
@@ -165,7 +176,10 @@ const objectBPath = '/models/Apple/apple';
 const objectCPath = '/models/Mushroom/mush';
 const objectDPath = '/models/Grape/grape';
 const objectEPath = '/models/Straw/straw';
+const loadingObjectPath = '/models/Banana/banana'
 let resolutionIndex = '1';
+
+
 
 // object selection event
 window.addEventListener('keydown', (event) =>
@@ -189,7 +203,7 @@ window.addEventListener('keydown', (event) =>
                     
                     // orientate the object
                     const loadedMesh = new THREE.Mesh(geometry, material)
-                    loadedMesh.position.z = 0.5
+                    loadedMesh.position.z = 1.2
         
                     objectA.clear()
                     objectA.add(loadedMesh)
@@ -211,7 +225,7 @@ window.addEventListener('keydown', (event) =>
             loader.load(
                 curObjectPath + resolutionIndex + '.stl',
                 function (geometry) { 
-                    geometry.scale(0.025, 0.025, 0.025)
+                    geometry.scale(0.03, 0.03, 0.03)
                     geometry.rotateX(Math.PI / 2)
                     geometry.rotateX(Math.PI)
                     
@@ -245,7 +259,7 @@ window.addEventListener('keydown', (event) =>
                     
                     // orientate the object
                     const loadedMesh = new THREE.Mesh(geometry, material)
-                    loadedMesh.position.z = 0.5
+                    loadedMesh.position.z = 1.2
         
                     objectA.clear()
                     objectA.add(loadedMesh)
@@ -267,13 +281,13 @@ window.addEventListener('keydown', (event) =>
             loader.load(
                 curObjectPath + resolutionIndex + '.stl',
                 function (geometry) { 
-                    geometry.scale(0.025, 0.025, 0.025)
+                    geometry.scale(0.03, 0.03, 0.03)
                     geometry.rotateX(Math.PI / 2)
                     geometry.rotateX(Math.PI)
                     
                     // orientate the object
                     const loadedMesh = new THREE.Mesh(geometry, material)
-                    loadedMesh.position.z = 0.5
+                    loadedMesh.position.z = 1.2
         
                     objectA.clear()
                     objectA.add(loadedMesh)
@@ -295,7 +309,7 @@ window.addEventListener('keydown', (event) =>
             loader.load(
                 curObjectPath + resolutionIndex + '.stl',
                 function (geometry) { 
-                    geometry.scale(0.025, 0.025, 0.025)
+                    geometry.scale(0.03, 0.03, 0.03)
                     geometry.rotateX(Math.PI / 2)
                     geometry.rotateX(Math.PI)
                     
@@ -348,11 +362,27 @@ window.addEventListener('keydown', (event) =>
             curObjectPath + resolutionIndex + '.stl',
             function (geometry) {   
                 // orient object
-                geometry.scale(0.025, 0.025, 0.025)
+                
                 geometry.rotateX(Math.PI / 2)
                 geometry.rotateX(Math.PI)                
+                if (curObjectPath == '/models/Pineapple/pine' || curObjectPath == '/models/Mushroom/mush')
+                {
+                    geometry.scale(0.025, 0.025, 0.025)
+                }
+                else
+                {
+                    geometry.scale(0.03, 0.03, 0.03)
+                }
                 const loadedMesh = new THREE.Mesh(geometry, material)
-                loadedMesh.position.z = 0.5
+                if (curObjectPath == '/models/Pineapple/pine' || curObjectPath == '/models/Mushroom/mush'
+                 || curObjectPath == '/models/Grape/grape')
+                {
+                    loadedMesh.position.z = 1.2
+                }
+                else
+                {
+                    loadedMesh.position.z = 0.5
+                }
 
                 objectA.clear()
                 objectB.clear()
@@ -414,7 +444,7 @@ window.addEventListener('resize', () =>
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
 camera.position.x = 0
 camera.position.y = 0
-camera.position.z = 2
+camera.position.z = 2.5
 scene.add(camera)
 
 // Controls
@@ -461,6 +491,99 @@ window.addEventListener('keydown', (event) =>
     //console.log(arrowControls.x, arrowControls.y, arrowControls.z)
 })
 
+// idleScene.add(sphere, torus)
+idleScene.add(camera)
+let currentScene = scene
+
+
+
+var inactivityTime = function () {
+    console.log("hello")
+    var time;
+    window.onload = resetTimer;
+    // DOM Events
+    document.onmousemove = resetTimer;
+    document.onkeydown = resetTimer;
+
+    var flagUp = false
+    var flagDown = false
+    var loadingTimer = setInterval(loadingIcon, 1000)  
+    resolutionIndex = 9
+
+    function loadingIcon() {
+        if (resolutionIndex == 1)
+        {
+            flagUp = true
+            flagDown = false
+        }
+        if (resolutionIndex == 9)
+        {
+            flagDown = true
+            flagUp = false
+        }
+        if (flagDown)
+        {
+            resolutionIndex -= 1
+        }
+        if (flagUp)
+        {
+            resolutionIndex += 1
+        }
+        
+        console.log(resolutionIndex)
+        loader.load(
+            loadingObjectPath + resolutionIndex + '.stl',
+            function (geometry) { 
+                geometry.scale(0.015, 0.015, 0.015)
+                geometry.rotateZ(Math.PI / 2)
+                geometry.rotateZ(Math.PI)
+                
+                // orientate the object
+                const loadedMesh = new THREE.Mesh(geometry, material)
+                loadedMesh.position.x = -1
+                loadedMesh.position.z = 0
+    
+                objectA.clear()
+                objectA.add(loadedMesh)                    
+                idleScene.add(objectA)
+                idleScene.add(camera)
+            },
+            (xhr) => {
+                console.log((xhr.loaded / xhr.total) * 100 + '% loaded')
+            },
+            (error) => {
+                console.log(error)
+            }
+        )
+    }
+        
+    function idle() {
+        console.log("idle")
+        scene.clear()
+        currentScene = idleScene
+        curObjectPath = objectEPath
+        resolutionIndex = 9
+        loadingTimer = setInterval(loadingIcon, 1000)  
+          
+        
+    }
+
+    function resetTimer() {
+        console.log("reset")
+        clearTimeout(time);
+        clearInterval(loadingTimer)
+        currentScene = scene
+
+        time = setTimeout(idle, 30000)
+
+        // 1000 milliseconds = 1 second
+    }
+};
+
+window.onload = function() {
+    inactivityTime();
+  }
+
 /**
  * Renderer
  */
@@ -487,11 +610,13 @@ const tick = () =>
     const elapsedTime = clock.getElapsedTime()
 
     // Update camera
-    camera.position.x = Math.sin(arrowControls.x) * 2.5 
-    camera.position.y = Math.cos(arrowControls.y) * 2.5 * Math.sin((elapsedTime/2))
-    camera.position.z = Math.cos(arrowControls.x) * 2.5
+    // camera.position.x = Math.sin(arrowControls.x) * 2.5 
+    // camera.position.y = Math.cos(arrowControls.y) * 2.5 * Math.sin((elapsedTime/2))
+    // camera.position.z = Math.cos(arrowControls.x) * 2.5
     //camera.position.y = cursor.y * 3
     camera.lookAt(0, 0, 0)
+
+    objectA.rotation.y = 0.3 * elapsedTime
 
     // Update objects rotation
     sphere.rotation.y = 0.1 * elapsedTime
@@ -507,7 +632,8 @@ const tick = () =>
     //controls.update()
 
     // Render
-    renderer.render(scene, camera)
+    renderer.render(currentScene, camera)
+    
 
     // Call tick again on the next frame
     window.requestAnimationFrame(tick)
