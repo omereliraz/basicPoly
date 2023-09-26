@@ -31,6 +31,15 @@ body
 }
 
 #kofi {
+    position: fixed;
+    font-family:'Courier';
+    color:black;
+    font-size: 150px;
+    left: 5%;
+    bottom: 5%;
+}
+
+#kofi1 {
     font-family:'Courier';
     color:White;
     

@@ -4,6 +4,9 @@
 #define pinA 2
 #define pinB 3
 #define pinC 4
+#define pinD 5
+#define pinE 6
+
 #define pinUp 5
 #define pinDown 6
 #define pinRight 7
@@ -11,9 +14,9 @@
 #define pinSlidePotA A0
 
 // Rotary Encoder Inputs
-#define CLK 2
-#define DT 3
-#define SW 4
+#define CLK 10
+#define DT 16
+#define SW 14
 
 int counter = 0;
 int currentStateCLK;
@@ -30,8 +33,10 @@ Keyboard.begin();
 pinMode(pinA, INPUT_PULLUP);
 pinMode(pinB, INPUT_PULLUP);
 pinMode(pinC, INPUT_PULLUP);
-pinMode(pinUp, INPUT_PULLUP);
-pinMode(pinDown, INPUT_PULLUP);
+pinMode(pinD, INPUT_PULLUP);
+pinMode(pinE, INPUT_PULLUP);
+// pinMode(pinUp, INPUT_PULLUP);
+// pinMode(pinDown, INPUT_PULLUP);
 pinMode(pinRight, INPUT_PULLUP);
 pinMode(pinLeft, INPUT_PULLUP);
 pinMode(pinSlidePotA, INPUT);
@@ -60,6 +65,12 @@ int pinBValue = 0;
 int buttonCPressed = 0;
 int pinCValue = 0;
 
+int buttonDPressed = 0;
+int pinDValue = 0;
+
+int buttonEPressed = 0;
+int pinEValue = 0;
+
 
 int buttonUpPressed = 0;
 int pinUpValue = 0;
@@ -72,6 +83,7 @@ int pinRightValue = 0;
 
 int buttonLeftPressed = 0;
 int pinLeftValue = 0;
+
 
 int prevSliderKey = 0;
 int curSliderKey = 1;
@@ -128,7 +140,7 @@ void loop() {
   // Remember last CLK state
   lastStateCLK = currentStateCLK;
 
-  // Read the button 1111state
+  // Read the button state
   int btnState = digitalRead(SW);
 
   //If we detect LOW signal, button is pressed
@@ -202,33 +214,67 @@ Keyboard.release(99);
 }
 }
 
-
-// read 'Up' button:
-pinUpValue = digitalRead(pinUp);
+// read 'd' button:
+pinDValue = digitalRead(pinD);
 delay(10);
 
-if (pinUpValue == 0)
+if (buttonDPressed != pinDValue)
 {
-Keyboard.press(KEY_UP_ARROW);
+buttonDPressed = pinDValue;
+Serial.print("button D:");
+Serial.println(pinDValue);
+if (buttonDPressed)
+{
+Keyboard.press(100);
+delay(50);
+Keyboard.release(100);
 }
-if (pinUpValue == 1)
-{
-Keyboard.release(KEY_UP_ARROW);
 }
 
 
-// read 'Down' button:
-pinDownValue = digitalRead(pinDown);
+// read 'e' button:
+pinEValue = digitalRead(pinE);
 delay(10);
 
-if (pinDownValue == 0)
+if (buttonEPressed != pinEValue)
 {
-Keyboard.press(KEY_DOWN_ARROW);
-}
-if (pinDownValue == 1)
+buttonEPressed = pinEValue;
+Serial.print("button E:");
+Serial.println(pinEValue);
+if (buttonDPressed)
 {
-Keyboard.release(KEY_DOWN_ARROW);
+Keyboard.press(101);
+delay(50);
+Keyboard.release(101);
 }
+}
+
+// // read 'Up' button:
+// pinUpValue = digitalRead(pinUp);
+// delay(10);
+
+// if (pinUpValue == 0)
+// {
+// Keyboard.press(KEY_UP_ARROW);
+// }
+// if (pinUpValue == 1)
+// {
+// Keyboard.release(KEY_UP_ARROW);
+// }
+
+
+// // read 'Down' button:
+// pinDownValue = digitalRead(pinDown);
+// delay(10);
+
+// if (pinDownValue == 0)
+// {
+// Keyboard.press(KEY_DOWN_ARROW);
+// }
+// if (pinDownValue == 1)
+// {
+// Keyboard.release(KEY_DOWN_ARROW);
+// }
 
 
 // read 'Right' button:

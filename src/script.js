@@ -69,8 +69,7 @@ const canvas = document.querySelector('canvas.webgl')
 const scene = new THREE.Scene()
 const idleScene = new THREE.Scene()
 
-const texture = new THREE.TextureLoader().load( "textures/door/kitchen.jpg" );
-idleScene.background = texture
+
 
 
 // Materials
@@ -134,25 +133,25 @@ material.flatShading = true
 //gui.add(material, 'displacementScale').min(0).max(10).step(0.0001)
 
 // Geometries
-const sphere = new THREE.Mesh(
-    new THREE.SphereGeometry(0.5, 64, 64),
-    material
-)
-sphere.position.x = -1.5
-sphere.geometry.setAttribute(
-    'uv2', 
-    new THREE.BufferAttribute(sphere.geometry.attributes.uv.array, 2)
-)
+// const sphere = new THREE.Mesh(
+//     new THREE.SphereGeometry(0.5, 64, 64),
+//     material
+// )
+// sphere.position.x = -1.5
+// sphere.geometry.setAttribute(
+//     'uv2', 
+//     new THREE.BufferAttribute(sphere.geometry.attributes.uv.array, 2)
+// )
 
-const torus = new THREE.Mesh(
-    new THREE.TorusGeometry(0.3, 0.2, 164, 128),
-    material
-)
-torus.position.x = 1.5
-torus.geometry.setAttribute(
-    'uv2', 
-    new THREE.BufferAttribute(torus.geometry.attributes.uv.array, 2)
-)
+// const torus = new THREE.Mesh(
+//     new THREE.TorusGeometry(0.3, 0.2, 164, 128),
+//     material
+// )
+// torus.position.x = 1.5
+// torus.geometry.setAttribute(
+//     'uv2', 
+//     new THREE.BufferAttribute(torus.geometry.attributes.uv.array, 2)
+// )
 
 
 
@@ -170,6 +169,7 @@ const loader = new STLLoader()
 const objectA = new THREE.Group()
 const objectB = new THREE.Group()
 const objectC = new THREE.Group()
+let curObjectPathInd = 0
 let curObjectPath = '/models/Grape/grape';
 const objectAPath = '/models/Pineapple/pine';
 const objectBPath = '/models/Apple/apple';
@@ -177,9 +177,11 @@ const objectCPath = '/models/Mushroom/mush';
 const objectDPath = '/models/Grape/grape';
 const objectEPath = '/models/Straw/straw';
 const loadingObjectPath = '/models/Banana/banana'
+const objects = ['/models/Banana/banana', '/models/Apple/apple','/models/Grape/grape','/models/Pineapple/pine','/models/Mushroom/mush','/models/Straw/straw']
 let resolutionIndex = '1';
 
-
+let texture = new THREE.TextureLoader().load( 'textures/door/back' + curObjectPathInd + '.jpg');
+//scene.background = texture
 
 // object selection event
 window.addEventListener('keydown', (event) =>
@@ -192,19 +194,108 @@ window.addEventListener('keydown', (event) =>
     switch(event.code)
     {
         case "KeyA":
-            curObjectPath = objectAPath
+            curObjectPathInd += 1
+            curObjectPathInd %= (objects.length - 1)
+            texture = new THREE.TextureLoader().load( 'textures/door/back' + curObjectPathInd + '.jpg');
+            scene.background = texture
+            curObjectPathInd += 1
+
             resolutionIndex = 9
+
             loader.load(
-                curObjectPath + resolutionIndex + '.stl',
+                objects[curObjectPathInd] + resolutionIndex + '.stl',
+                
                 function (geometry) { 
-                    geometry.scale(0.025, 0.025, 0.025)
+                    console.log(curObjectPathInd)
+                    geometry.scale(0.03, 0.03, 0.03)
                     geometry.rotateX(Math.PI / 2)
                     geometry.rotateX(Math.PI)
                     
                     // orientate the object
                     const loadedMesh = new THREE.Mesh(geometry, material)
-                    loadedMesh.position.z = 1.2
-        
+                    loadedMesh.position.z = 0.5
+                    // switch(curObjectPathInd)
+                    // {
+                    //     case 0:
+                    //         geometry.scale(0.015, 0.015, 0.015)
+                    //         geometry.rotateZ(Math.PI / 2)
+                    //         geometry.rotateZ(Math.PI)
+                            
+                    //     case 1:
+                    //         geometry.scale(0.025, 0.025, 0.025)
+                    //         geometry.rotateX(Math.PI / 2)
+                    //         geometry.rotateX(Math.PI)
+                            
+                    //     case 2:
+                    //         geometry.scale(0.03, 0.03, 0.03)
+                    //         geometry.rotateX(Math.PI / 2)
+                    //         geometry.rotateX(Math.PI)
+                            
+                    //     case 3:
+                    //         geometry.scale(0.025, 0.025, 0.025)
+                    //         geometry.rotateX(Math.PI / 2)
+                    //         geometry.rotateX(Math.PI)
+                            
+                    //     case 4:
+                    //         geometry.scale(0.03, 0.03, 0.03)
+                    //         geometry.rotateX(Math.PI / 2)
+                    //         geometry.rotateX(Math.PI)
+                    // }        
+                    // const loadedMesh = new THREE.Mesh(geometry, material)     
+                    // switch(curObjectPathInd)
+                    // {
+                    //     case 0:
+                            
+                    //         loadedMesh.position.z = 0
+                    //         loadedMesh.position.x = -1
+                    //     case 1:
+                            
+                    //         loadedMesh.position.z = 1.2
+                    //     case 2:
+                            
+                    //         loadedMesh.position.z = 0.5
+                    //     case 3:
+                           
+                    //         loadedMesh.position.z = 1.2
+                    //     case 4:
+                            
+                    //         loadedMesh.position.z = 1.2
+
+
+                    // }
+                    // geometry.scale(0.025, 0.025, 0.025)
+                    // geometry.rotateX(Math.PI / 2)
+                    // geometry.rotateX(Math.PI)
+                    // if (objects[curObjectPathInd] == '/models/Pineapple/pine' || objects[curObjectPathInd] == '/models/Mushroom/mush')
+                    // {
+                    //     geometry.scale(0.025, 0.025, 0.025)
+                    // }
+                    // if (objects[curObjectPathInd] == '/models/Banana/banana')
+                    // {
+                    //     geometry.scale(0.015, 0.015, 0.015)
+                    // }                        
+                    // else
+                    // {
+                    //     geometry.scale(0.03, 0.03, 0.03)
+                    // }
+
+                    // orientate the object
+                    // const loadedMesh = new THREE.Mesh(geometry, material)
+                    // if (objects[curObjectPathInd] == '/models/Pineapple/pine' || objects[curObjectPathInd] == '/models/Mushroom/mush'
+                    // || objects[curObjectPathInd] == '/models/Grape/grape')
+                    // {
+                    //     loadedMesh.position.z = 1.2
+                    // }
+                    // else if (objects[curObjectPathInd] == '/models/Banana/banana')
+                    // {
+                    //     loadedMesh.position.x = -1
+                    //     loadedMesh.position.z = 0
+                    // }    
+                    // else
+                    // {
+                    //     loadedMesh.position.z = 0.5
+                    // }              
+                    
                     objectA.clear()
                     objectA.add(loadedMesh)
                     scene.clear()
@@ -359,26 +450,36 @@ window.addEventListener('keydown', (event) =>
         }
         
         loader.load(
-            curObjectPath + resolutionIndex + '.stl',
+            objects[curObjectPathInd] + resolutionIndex + '.stl',
             function (geometry) {   
                 // orient object
                 
                 geometry.rotateX(Math.PI / 2)
                 geometry.rotateX(Math.PI)                
-                if (curObjectPath == '/models/Pineapple/pine' || curObjectPath == '/models/Mushroom/mush')
+                if (objects[curObjectPathInd] == '/models/Pineapple/pine' || objects[curObjectPathInd] == '/models/Mushroom/mush')
                 {
                     geometry.scale(0.025, 0.025, 0.025)
                 }
+                if (objects[curObjectPathInd] == '/models/Banana/banana')
+                    {
+                        geometry.scale(0.015, 0.015, 0.015)
+                    }    
                 else
                 {
                     geometry.scale(0.03, 0.03, 0.03)
                 }
+
                 const loadedMesh = new THREE.Mesh(geometry, material)
-                if (curObjectPath == '/models/Pineapple/pine' || curObjectPath == '/models/Mushroom/mush'
-                 || curObjectPath == '/models/Grape/grape')
+                if (objects[curObjectPathInd] == '/models/Pineapple/pine' || objects[curObjectPathInd] == '/models/Mushroom/mush'
+                 || objects[curObjectPathInd] == '/models/Grape/grape')
                 {
                     loadedMesh.position.z = 1.2
                 }
+                if (objects[curObjectPathInd] == '/models/Banana/banana')
+                    {
+                        loadedMesh.position.x = -1
+                        loadedMesh.position.z = 0
+                    }  
                 else
                 {
                     loadedMesh.position.z = 0.5
@@ -529,10 +630,13 @@ var inactivityTime = function () {
         {
             resolutionIndex += 1
         }
-        
+        curObjectPathInd = 0
+        // texture = new THREE.TextureLoader().load( 'textures/door/back' + curObjectPathInd + '.jpg');
+        // scene.background = texture
         console.log(resolutionIndex)
         loader.load(
-            loadingObjectPath + resolutionIndex + '.stl',
+            
+            objects[curObjectPathInd] + resolutionIndex + '.stl',
             function (geometry) { 
                 geometry.scale(0.015, 0.015, 0.015)
                 geometry.rotateZ(Math.PI / 2)
@@ -545,8 +649,8 @@ var inactivityTime = function () {
     
                 objectA.clear()
                 objectA.add(loadedMesh)                    
-                idleScene.add(objectA)
-                idleScene.add(camera)
+                scene.add(objectA)
+                scene.add(camera)
             },
             (xhr) => {
                 console.log((xhr.loaded / xhr.total) * 100 + '% loaded')
@@ -560,9 +664,12 @@ var inactivityTime = function () {
     function idle() {
         console.log("idle")
         scene.clear()
-        currentScene = idleScene
-        curObjectPath = objectEPath
+        // currentScene = idleScene
+        // curObjectPath = objectEPath
+        curObjectPathInd = 0
         resolutionIndex = 9
+        texture = new THREE.TextureLoader().load( 'textures/door/back' + curObjectPathInd + '.jpg');
+        scene.background = texture
         loadingTimer = setInterval(loadingIcon, 1000)  
           
         
@@ -573,8 +680,10 @@ var inactivityTime = function () {
         clearTimeout(time);
         clearInterval(loadingTimer)
         currentScene = scene
+        let firstTimeout = true
+        
 
-        time = setTimeout(idle, 30000)
+        time = setTimeout(idle, 3000)
 
         // 1000 milliseconds = 1 second
     }
@@ -603,7 +712,7 @@ const tick = () =>
     if (scene.children.length > 1)
     {    
         console.log(scene.children[0].children[0].geometry.attributes.normal.count)
-        document.getElementById("currentTri").innerHTML = Math.ceil((scene.children[0].children[0].geometry.attributes.normal.count / 3) / 3);
+        document.getElementById("currentTri").innerHTML = Math.ceil((currentScene.children[0].children[0].geometry.attributes.normal.count / 3) / 3);
     }
           
     
@@ -619,13 +728,13 @@ const tick = () =>
     objectA.rotation.y = 0.3 * elapsedTime
 
     // Update objects rotation
-    sphere.rotation.y = 0.1 * elapsedTime
-    // plane.rotation.y = -0.1 * elapsedTime
-    torus.rotation.y = 0.1 * elapsedTime
+    // sphere.rotation.y = 0.1 * elapsedTime
+    // // plane.rotation.y = -0.1 * elapsedTime
+    // torus.rotation.y = 0.1 * elapsedTime
 
-    sphere.rotation.x = 0.15 * elapsedTime
-    // plane.rotation.x = 0.15 * elapsedTime
-    torus.rotation.x = -0.15 * elapsedTime
+    // sphere.rotation.x = 0.15 * elapsedTime
+    // // plane.rotation.x = 0.15 * elapsedTime
+    // torus.rotation.x = -0.15 * elapsedTime
 
 
     // Update controls
